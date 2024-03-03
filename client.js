@@ -4,6 +4,8 @@ const readline = require('readline').createInterface({
     output: process.stdout
 });
 
+const END = 'END';
+
 const socket = new Socket();
 
 socket.connect({
@@ -14,8 +16,16 @@ socket.setEncoding('utf-8');
 
 readline.on('line', (line) => {
     socket.write(line);
+    if (line === END) {
+        socket.end();
+    }
 });
 
 socket.on('data', (data) => {
     console.log(data);
 });
+
+socket.on('close', () => {
+    console.log('Connection closed');
+    process.exit(0);
+})

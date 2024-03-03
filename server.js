@@ -1,25 +1,21 @@
-const { Server } = require('net');
+import Server from 'net';
 
-const server = new Server();
+const HOST = 'localhost';
+const PORT = 3000;
+const END = 'END';
 
-/**
- * 
- * 
- */
-server.on('connection', (socket) => {
-    const remoteSocket = `${socket.remoteAddress}:${socket.remotePort}`;
-    console.log(`New connection from ${remoteSocket}`);
+const listen = (port) => {
+  const server = new Server();
+
+  server.on('connection', (socket) => {
+    const remoteSocket = `${socket.remoteAdress}:${socket.remoteSocket}`;
+    console.log('New connection from', remoteSocket);
     socket.setEncoding('utf-8');
-    socket.on('data', (data) => {
-        console.log(data);
-        socket.write(data);
+
+    socket.on('data', (message) => {
+      pass
     })
-})
+  }
+}
 
 
-server.listen({
-    port: 3000,
-    host: 'localhost',
-}, () => {
-    console.log('Server is running at http://localhost:3000');
-})
