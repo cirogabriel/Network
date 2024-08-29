@@ -22,6 +22,11 @@ const connect = (host, port) => {
     socket.on('connect', () => {
         console.log('Connected');
 
+        readline.question('Choose your usename: ', (username) => {
+            socket.write(username);
+            console.log(`Type any message to send it, type, ${END} to finish`)
+        })
+
         readline.on('line', (line) => {
             socket.write(line);
             if (line === END) {
@@ -29,22 +34,26 @@ const connect = (host, port) => {
             }
         });
 
+        socket.on('error', (err) => {
+            error(err.message);
+        });
+
         socket.on('data', (data) => {
             console.log(data);
         });
-
-        socket.on('close', () => {
-            console.log('Connection closed');
-            process.exit(0);
-        })
-        
     });
+
+    socket.on('close', () => {
+        console.log('Connection closed');
+        process.exit(0);
+    })
+    
 }
 
 
 
 const main = () => {
-    if (process.argv.lenth !== 4) 
+    if (process.argv.length !== 4) 
         error(`Usage: node ${__filename} host port`)
 
     let [, , host, port] = process.argv;

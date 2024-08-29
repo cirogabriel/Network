@@ -1,14 +1,24 @@
 const { Server } = require('net');
 
 const HOST = 'localhost';
-const PORT = 3000;
 const END = 'END';
+
+const connection = new Map();
 
 
 const error = (message) => {
   console.error(message);
   process.exit(1);
 }
+
+const sendMessage = (message, origin) => {
+  for (const socket of connection.keys()) {
+    if (socket !== origin) {
+      socket.write(message);
+    }
+  }
+}
+
 
 const listen = (port) => {
   const server = new Server();
@@ -19,11 +29,24 @@ const listen = (port) => {
     socket.setEncoding('utf-8');
 
     socket.on('data', (message) => {
-      console.log(`${remoteSocket} -> ${message}`);
-      socket.write(message);
-      if (message === END) {
+      connection.values();
+
+      if (!connection.has(socket)){
+        console.log(`Username ${message} set for connection ${remoteSocket}`);
+        connection.set(socket, message);
+      } else if (message === END) {
+        connection.delete(socket);
         socket.end();
+      } else {
+        const fullMessage = `[${connection.get(socket)}]: ${message}`;
+        console.log(`${remoteSocket} -> ${fullMessage}`);
+        sendMessage(fullMessage, socket);
       }
+     
+    });
+
+    socket.on('error', (err) => {
+      console.error(`Connection ${remoteSocket} -> ${err.message}`);
     });
 
     socket.on('close', () => {
@@ -33,8 +56,8 @@ const listen = (port) => {
   });
 
   
-  server.listen({ host: HOST, port: PORT }, () => {
-    console.log('Listening on port', PORT);
+  server.listen({ host: HOST, port: port }, () => {
+    console.log('Listening on port', port);
   });
 
 
