@@ -1,4 +1,4 @@
-import socket
+import sockets
 import sys
 import threading
 
@@ -20,7 +20,7 @@ def send_message(message, origin):
 
 
 def listen(port):
-    server = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+    server = sockets.socket(sockets.AF_INET, sockets.SOCK_STREAM)
     server.bind((HOST, port))
     server.listen()
 
