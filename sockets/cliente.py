@@ -1,5 +1,5 @@
 import sys
-import sockets
+import socket
 import threading
 
 END = 'END'
@@ -13,7 +13,7 @@ def error(message):
 def connect(host, port):
     print(f'Connecting to {host}:{port}')
 
-    s = sockets.socket(sockets.AF_INET, sockets.SOCK_STREAM)
+    s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
     s.connect((host, port))
 
     print('Connected')
@@ -49,7 +49,7 @@ def main():
     host = sys.argv[1]
 
     try:
-        port = sys.argv[2]
+        port = int(sys.argv[2])
     except ValueError:
         error(f'Invalid port {sys.argv[2]}')
 
