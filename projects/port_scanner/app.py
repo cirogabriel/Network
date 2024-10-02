@@ -1,34 +1,26 @@
 import customtkinter as ctk
 import threading
-from scanner import scan_ports  # Asume que tenemos la función de escaneo
+from scanner import scan_ports
 
-# Configuración de la ventana principal
-ctk.set_appearance_mode("dark")  # Modo oscuro
-ctk.set_default_color_theme("blue")  # Tema azul
+ctk.set_appearance_mode("dark")
+ctk.set_default_color_theme("blue")
 
 
 class PortScannerApp(ctk.CTk):
     def __init__(self):
         super().__init__()
-
         self.title("Escáner de Puertos")
-        self.geometry("800x400")  # Ajustamos el tamaño para el nuevo diseño
-
-        # Variables para la entrada de datos
+        self.geometry("725x500")
         self.host_var = ctk.StringVar()
         self.protocol_var = ctk.StringVar(value="TCP")
         self.start_port_var = ctk.StringVar()
         self.end_port_var = ctk.StringVar()
-
-        # Crear la interfaz
         self.create_widgets()
 
     def create_widgets(self):
-        # Crear un frame para contener el formulario (a la izquierda)
+        # formulario izquierda
         form_frame = ctk.CTkFrame(self)
-        form_frame.grid(row=0, column=0, padx=20, pady=20, sticky="n")
-
-        # Etiqueta de título
+        form_frame.grid(row=0, column=0, padx=(20, 2), pady=20, sticky="n")
         title_label = ctk.CTkLabel(
             form_frame, text="ESCÁNER DE PUERTOS", font=ctk.CTkFont(size=20, weight="bold"))
         title_label.grid(row=0, column=0, columnspan=2, pady=10)
@@ -40,39 +32,39 @@ class PortScannerApp(ctk.CTk):
             form_frame, textvariable=self.host_var, width=200)
         host_entry.grid(row=1, column=1, pady=5, padx=10)
 
-        # Campo de entrada para el puerto inicial
+        # Puerto inicial
         ctk.CTkLabel(form_frame, text="Puerto Inicial:").grid(
             row=2, column=0, padx=10, pady=5, sticky="w")
         start_port_entry = ctk.CTkEntry(
             form_frame, textvariable=self.start_port_var, width=200)
         start_port_entry.grid(row=2, column=1, pady=5, padx=10)
 
-        # Campo de entrada para el puerto final
+        # Puerto final
         ctk.CTkLabel(form_frame, text="Puerto Final:").grid(
             row=3, column=0, padx=10, pady=5, sticky="w")
         end_port_entry = ctk.CTkEntry(
             form_frame, textvariable=self.end_port_var, width=200)
         end_port_entry.grid(row=3, column=1, pady=5, padx=10)
 
-        # Opción para el tipo de protocolo (TCP/UDP)
+        # Menu desplegable
         ctk.CTkLabel(form_frame, text="Protocolo:").grid(
             row=4, column=0, padx=10, pady=5, sticky="w")
         protocol_option = ctk.CTkOptionMenu(
-            form_frame, values=["TCP", "UDP"], variable=self.protocol_var)
+            form_frame, values=["TCP", "UDP"], variable=self.protocol_var, width=200)
         protocol_option.grid(row=4, column=1, pady=5, padx=10)
 
-        # Botón para iniciar el escaneo (más largo)
+        # Boton
         scan_button = ctk.CTkButton(
-            form_frame, text="Escanear", command=self.start_scan_thread, width=240)
+            form_frame, text="Escanear", command=self.start_scan_thread, width=324)
         scan_button.grid(row=5, column=0, columnspan=2, pady=20)
 
-        # Crear un frame para los resultados (a la derecha)
-        result_frame = ctk.CTkFrame(self)
-        result_frame.grid(row=0, column=1, padx=20, pady=20, sticky="n")
+        # Tabla derecha
+        result_frame = ctk.CTkFrame(self, fg_color="transparent")
+        result_frame.grid(row=0, column=1, padx=(20, 2), pady=20, sticky="n")
 
-        # Área de resultados (tabla o lista)
-        self.result_text = ctk.CTkTextbox(result_frame, width=400, height=300)
-        self.result_text.grid(row=0, column=0, pady=10)
+        # Area de resultados
+        self.result_text = ctk.CTkTextbox(result_frame, width=320, height=460)
+        self.result_text.grid(row=0, column=0, pady=1)
 
     def start_scan_thread(self):
         """Inicia el escaneo en un hilo separado para no bloquear la interfaz"""
@@ -121,7 +113,6 @@ class PortScannerApp(ctk.CTk):
                 self.result_text.insert("end", result_line)
 
 
-# Iniciar la aplicación
 if __name__ == "__main__":
     app = PortScannerApp()
     app.mainloop()
