@@ -10,12 +10,21 @@ def escanear_puerto_tcp(host, puerto):
             if resultado == 0:
                 servicio = socket.getservbyport(
                     puerto, 'tcp') if puerto <= 1024 else 'Desconocido'
-                return {"puerto": puerto, "estado": "abierto", "protocolo": "TCP", "servicio": servicio}
+                return {"puerto": puerto,
+                        "estado": "abierto",
+                        "protocolo": "TCP",
+                        "servicio": servicio}
             else:
-                return {"puerto": puerto, "estado": "cerrado", "protocolo": "TCP", "servicio": "Desconocido"}
+                return {"puerto": puerto,
+                        "estado": "cerrado",
+                        "protocolo": "TCP",
+                        "servicio": "Desconocido"}
     except Exception as e:
         print(f"Error al escanear el puerto TCP {puerto}: {e}")
-        return {"puerto": puerto, "estado": "error", "protocolo": "TCP", "servicio": "Desconocido"}
+        return {"puerto": puerto,
+                "estado": "error",
+                "protocolo": "TCP",
+                "servicio": "Desconocido"}
 
 
 def escanear_puerto_udp(host, puerto):
@@ -28,14 +37,26 @@ def escanear_puerto_udp(host, puerto):
                 _, _ = s.recvfrom(1024)
                 servicio = socket.getservbyport(
                     puerto, 'udp') if puerto <= 1024 else 'Desconocido'
-                return {"puerto": puerto, "estado": "abierto", "protocolo": "UDP", "servicio": servicio}
+                return {"puerto": puerto,
+                        "estado": "abierto",
+                        "protocolo": "UDP",
+                        "servicio": servicio}
             except socket.timeout:
-                return {"puerto": puerto, "estado": "abierto o filtrado", "protocolo": "UDP", "servicio": "Desconocido"}
+                return {"puerto": puerto,
+                        "estado": "abierto o filtrado",
+                        "protocolo": "UDP", "servicio":
+                        "Desconocido"}
             except socket.error:
-                return {"puerto": puerto, "estado": "cerrado", "protocolo": "UDP", "servicio": "Desconocido"}
+                return {"puerto": puerto,
+                        "estado": "cerrado",
+                        "protocolo": "UDP",
+                        "servicio": "Desconocido"}
     except Exception as e:
         print(f"Error al escanear el puerto UDP {puerto}: {e}")
-        return {"puerto": puerto, "estado": "error", "protocolo": "UDP", "servicio": "Desconocido"}
+        return {"puerto": puerto,
+                "estado": "error",
+                "protocolo": "UDP",
+                "servicio": "Desconocido"}
 
 
 def escanear_puertos(host, puerto_inicio, puerto_fin, protocolo="TCP", hilos=500):

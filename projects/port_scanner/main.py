@@ -1,5 +1,5 @@
 from scanner import escanear_puertos
-from utils import validar_ip, validar_puertos, resolver_host, mostrar_detalles_puertos
+from projects.port_scanner.utils import validar_ip, validar_puertos, resolver_host, mostrar_detalles_puertos
 
 
 def main():

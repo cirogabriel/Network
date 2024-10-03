@@ -1,6 +1,7 @@
 import customtkinter as ctk
 import threading
 from scanner import escanear_puertos
+import utils
 
 ctk.set_appearance_mode("dark")
 ctk.set_default_color_theme("blue")
@@ -79,22 +80,40 @@ class AppEscanerPuertos(ctk.CTk):
         puerto_inicio = self.puerto_inicio_var.get()
         puerto_fin = self.puerto_fin_var.get()
 
+        # Validacion del host
         if not host:
             self.texto_resultado.insert(
-                "end", "Error: Por favor, ingrese un host valido.\n")
-            # Restaurar el boton
+                "end", "Error: Por favor, ingrese un host válido.\n")
             self.boton_escanear.configure(text="Escanear", state="normal")
             return
 
+        # Validar si es una IP valida o resolver el host a una IP
+        if not utils.validar_ip(host):
+            ip_resuelta = utils.resolver_host(host)
+            if not ip_resuelta:
+                self.texto_resultado.insert(
+                    "end", "Error: No se pudo resolver el host.\n")
+                self.boton_escanear.configure(text="Escanear", state="normal")
+                return
+            host = ip_resuelta
+
+        # Validacion de puertos
         try:
             puerto_inicio = int(puerto_inicio)
             puerto_fin = int(puerto_fin)
         except ValueError:
             self.texto_resultado.insert(
-                "end", "Error: Los puertos deben ser numeros enteros.\n")
+                "end", "Error: Los puertos deben ser números enteros.\n")
             self.boton_escanear.configure(text="Escanear", state="normal")
             return
 
+        if not utils.validar_puertos(puerto_inicio, puerto_fin):
+            self.texto_resultado.insert(
+                "end", "Error: Los puertos deben estar en el rango de 0 a 65535.\n")
+            self.boton_escanear.configure(text="Escanear", state="normal")
+            return
+
+        # Iniciar escaneo si las validaciones pasan
         self.texto_resultado.delete("1.0", "end")
         self.texto_resultado.insert(
             "end", f"Escaneando {protocolo} en {host} del puerto {puerto_inicio} al {puerto_fin}...\n")
