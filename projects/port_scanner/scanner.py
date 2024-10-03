@@ -2,56 +2,56 @@ import socket
 from concurrent.futures import ThreadPoolExecutor
 
 
-def scan_tcp_port(host, port):
+def escanear_puerto_tcp(host, puerto):
     try:
         with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as s:
             s.settimeout(1)
-            result = s.connect_ex((host, port))
-            if result == 0:
-                service = socket.getservbyport(
-                    port, 'tcp') if port <= 1024 else 'Desconocido'
-                return {"port": port, "status": "abierto", "protocol": "TCP", "service": service}
+            resultado = s.connect_ex((host, puerto))
+            if resultado == 0:
+                servicio = socket.getservbyport(
+                    puerto, 'tcp') if puerto <= 1024 else 'Desconocido'
+                return {"puerto": puerto, "estado": "abierto", "protocolo": "TCP", "servicio": servicio}
             else:
-                return {"port": port, "status": "cerrado", "protocol": "TCP", "service": "Desconocido"}
+                return {"puerto": puerto, "estado": "cerrado", "protocolo": "TCP", "servicio": "Desconocido"}
     except Exception as e:
-        print(f"Error al escanear el puerto TCP {port}: {e}")
-        return {"port": port, "status": "error", "protocol": "TCP", "service": "Desconocido"}
+        print(f"Error al escanear el puerto TCP {puerto}: {e}")
+        return {"puerto": puerto, "estado": "error", "protocolo": "TCP", "servicio": "Desconocido"}
 
 
-def scan_udp_port(host, port):
+def escanear_puerto_udp(host, puerto):
     try:
         with socket.socket(socket.AF_INET, socket.SOCK_DGRAM) as s:
-            s.settimeout(1)
-            s.sendto(b'', (host, port))
+            s.settimeout(0.9)
+            s.sendto(b'', (host, puerto))
 
             try:
-                data, _ = s.recvfrom(1024)
-                service = socket.getservbyport(
-                    port, 'udp') if port <= 1024 else 'Desconocido'
-                return {"port": port, "status": "abierto", "protocol": "UDP", "service": service}
+                _, _ = s.recvfrom(1024)
+                servicio = socket.getservbyport(
+                    puerto, 'udp') if puerto <= 1024 else 'Desconocido'
+                return {"puerto": puerto, "estado": "abierto", "protocolo": "UDP", "servicio": servicio}
             except socket.timeout:
-                return {"port": port, "status": "abierto o filtrado", "protocol": "UDP", "service": "Desconocido"}
+                return {"puerto": puerto, "estado": "abierto o filtrado", "protocolo": "UDP", "servicio": "Desconocido"}
             except socket.error:
-                return {"port": port, "status": "cerrado", "protocol": "UDP", "service": "Desconocido"}
+                return {"puerto": puerto, "estado": "cerrado", "protocolo": "UDP", "servicio": "Desconocido"}
     except Exception as e:
-        print(f"Error al escanear el puerto UDP {port}: {e}")
-        return {"port": port, "status": "error", "protocol": "UDP", "service": "Desconocido"}
+        print(f"Error al escanear el puerto UDP {puerto}: {e}")
+        return {"puerto": puerto, "estado": "error", "protocolo": "UDP", "servicio": "Desconocido"}
 
 
-def scan_ports(host, start_port, end_port, protocol="TCP", threads=100):
-    open_ports = []
+def escanear_puertos(host, puerto_inicio, puerto_fin, protocolo="TCP", hilos=500):
+    puertos_abiertos = []
 
-    with ThreadPoolExecutor(max_workers=threads) as executor:
-        if protocol == "TCP":
-            futures = [executor.submit(scan_tcp_port, host, port)
-                       for port in range(start_port, end_port + 1)]
+    with ThreadPoolExecutor(max_workers=hilos) as ejecutor:
+        if protocolo == "TCP":
+            tareas = [ejecutor.submit(escanear_puerto_tcp, host, puerto)
+                      for puerto in range(puerto_inicio, puerto_fin + 1)]
         else:
-            futures = [executor.submit(scan_udp_port, host, port)
-                       for port in range(start_port, end_port + 1)]
+            tareas = [ejecutor.submit(escanear_puerto_udp, host, puerto)
+                      for puerto in range(puerto_inicio, puerto_fin + 1)]
 
-        for future in futures:
-            result = future.result()
-            if result and result['status'] != "cerrado":
-                open_ports.append(result)
+        for tarea in tareas:
+            resultado = tarea.result()
+            if resultado and resultado['estado'] != "cerrado":
+                puertos_abiertos.append(resultado)
 
-    return open_ports
+    return puertos_abiertos

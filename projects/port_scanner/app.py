@@ -1,118 +1,121 @@
 import customtkinter as ctk
 import threading
-from scanner import scan_ports
+from scanner import escanear_puertos
 
 ctk.set_appearance_mode("dark")
 ctk.set_default_color_theme("blue")
 
 
-class PortScannerApp(ctk.CTk):
+class AppEscanerPuertos(ctk.CTk):
     def __init__(self):
         super().__init__()
-        self.title("Escáner de Puertos")
+        self.title("Escaner de Puertos")
         self.geometry("725x500")
         self.host_var = ctk.StringVar()
-        self.protocol_var = ctk.StringVar(value="TCP")
-        self.start_port_var = ctk.StringVar()
-        self.end_port_var = ctk.StringVar()
-        self.create_widgets()
+        self.protocolo_var = ctk.StringVar(value="TCP")
+        self.puerto_inicio_var = ctk.StringVar()
+        self.puerto_fin_var = ctk.StringVar()
+        self.crear_widgets()
 
-    def create_widgets(self):
+    def crear_widgets(self):
         # formulario izquierda
-        form_frame = ctk.CTkFrame(self)
-        form_frame.grid(row=0, column=0, padx=(20, 2), pady=20, sticky="n")
-        title_label = ctk.CTkLabel(
-            form_frame, text="ESCÁNER DE PUERTOS", font=ctk.CTkFont(size=20, weight="bold"))
-        title_label.grid(row=0, column=0, columnspan=2, pady=10)
+        marco_form = ctk.CTkFrame(self)
+        marco_form.grid(row=0, column=0, padx=(20, 2), pady=20, sticky="n")
+        etiqueta_titulo = ctk.CTkLabel(
+            marco_form, text="ESCANER DE PUERTOS", font=ctk.CTkFont(size=20, weight="bold"))
+        etiqueta_titulo.grid(row=0, column=0, columnspan=2, pady=10)
 
         # Campo de entrada para el Host/IP
-        ctk.CTkLabel(form_frame, text="Host/dirección IP:").grid(row=1,
+        ctk.CTkLabel(marco_form, text="Host/direccion IP:").grid(row=1,
                                                                  column=0, padx=10, pady=5, sticky="w")
-        host_entry = ctk.CTkEntry(
-            form_frame, textvariable=self.host_var, width=200)
-        host_entry.grid(row=1, column=1, pady=5, padx=10)
+        entrada_host = ctk.CTkEntry(
+            marco_form, textvariable=self.host_var, width=200)
+        entrada_host.grid(row=1, column=1, pady=5, padx=10)
 
         # Puerto inicial
-        ctk.CTkLabel(form_frame, text="Puerto Inicial:").grid(
+        ctk.CTkLabel(marco_form, text="Puerto Inicial:").grid(
             row=2, column=0, padx=10, pady=5, sticky="w")
-        start_port_entry = ctk.CTkEntry(
-            form_frame, textvariable=self.start_port_var, width=200)
-        start_port_entry.grid(row=2, column=1, pady=5, padx=10)
+        entrada_puerto_inicio = ctk.CTkEntry(
+            marco_form, textvariable=self.puerto_inicio_var, width=200)
+        entrada_puerto_inicio.grid(row=2, column=1, pady=5, padx=10)
 
         # Puerto final
-        ctk.CTkLabel(form_frame, text="Puerto Final:").grid(
+        ctk.CTkLabel(marco_form, text="Puerto Final:").grid(
             row=3, column=0, padx=10, pady=5, sticky="w")
-        end_port_entry = ctk.CTkEntry(
-            form_frame, textvariable=self.end_port_var, width=200)
-        end_port_entry.grid(row=3, column=1, pady=5, padx=10)
+        entrada_puerto_fin = ctk.CTkEntry(
+            marco_form, textvariable=self.puerto_fin_var, width=200)
+        entrada_puerto_fin.grid(row=3, column=1, pady=5, padx=10)
 
         # Menu desplegable
-        ctk.CTkLabel(form_frame, text="Protocolo:").grid(
+        ctk.CTkLabel(marco_form, text="Protocolo:").grid(
             row=4, column=0, padx=10, pady=5, sticky="w")
-        protocol_option = ctk.CTkOptionMenu(
-            form_frame, values=["TCP", "UDP"], variable=self.protocol_var, width=200)
-        protocol_option.grid(row=4, column=1, pady=5, padx=10)
+        menu_protocolo = ctk.CTkOptionMenu(
+            marco_form, values=["TCP", "UDP"], variable=self.protocolo_var, width=200)
+        menu_protocolo.grid(row=4, column=1, pady=5, padx=10)
 
-        # Boton
-        scan_button = ctk.CTkButton(
-            form_frame, text="Escanear", command=self.start_scan_thread, width=324)
-        scan_button.grid(row=5, column=0, columnspan=2, pady=20)
+        # Boton de escanear
+        self.boton_escanear = ctk.CTkButton(
+            marco_form, text="Escanear", command=self.iniciar_hilo_escaneo, width=324)
+        self.boton_escanear.grid(row=5, column=0, columnspan=2, pady=20)
 
         # Tabla derecha
-        result_frame = ctk.CTkFrame(self, fg_color="transparent")
-        result_frame.grid(row=0, column=1, padx=(20, 2), pady=20, sticky="n")
+        marco_resultado = ctk.CTkFrame(self, fg_color="transparent")
+        marco_resultado.grid(row=0, column=1, padx=(
+            20, 2), pady=20, sticky="n")
 
         # Area de resultados
-        self.result_text = ctk.CTkTextbox(result_frame, width=320, height=460)
-        self.result_text.grid(row=0, column=0, pady=1)
+        self.texto_resultado = ctk.CTkTextbox(
+            marco_resultado, width=320, height=460)
+        self.texto_resultado.grid(row=0, column=0, pady=1)
 
-    def start_scan_thread(self):
-        """Inicia el escaneo en un hilo separado para no bloquear la interfaz"""
-        scan_thread = threading.Thread(target=self.start_scan)
-        scan_thread.start()
+    def iniciar_hilo_escaneo(self):
+        self.boton_escanear.configure(text="Escaneando...", state="disabled")
+        hilo_escaneo = threading.Thread(target=self.iniciar_escaneo)
+        hilo_escaneo.start()
 
-    def start_scan(self):
-        """Función para iniciar el escaneo de puertos"""
+    def iniciar_escaneo(self):
         host = self.host_var.get().strip()
-        protocol = self.protocol_var.get()
-        start_port = self.start_port_var.get()
-        end_port = self.end_port_var.get()
+        protocolo = self.protocolo_var.get()
+        puerto_inicio = self.puerto_inicio_var.get()
+        puerto_fin = self.puerto_fin_var.get()
 
-        # Validar las entradas
         if not host:
-            self.result_text.insert(
-                "end", "Error: Por favor, ingrese un host válido.\n")
+            self.texto_resultado.insert(
+                "end", "Error: Por favor, ingrese un host valido.\n")
+            # Restaurar el boton
+            self.boton_escanear.configure(text="Escanear", state="normal")
             return
 
         try:
-            start_port = int(start_port)
-            end_port = int(end_port)
+            puerto_inicio = int(puerto_inicio)
+            puerto_fin = int(puerto_fin)
         except ValueError:
-            self.result_text.insert(
-                "end", "Error: Los puertos deben ser números enteros.\n")
+            self.texto_resultado.insert(
+                "end", "Error: Los puertos deben ser numeros enteros.\n")
+            self.boton_escanear.configure(text="Escanear", state="normal")
             return
 
-        # Limpiar el área de resultados
-        self.result_text.delete("1.0", "end")
-        self.result_text.insert(
-            "end", f"Escaneando {protocol} en {host} del puerto {start_port} al {end_port}...\n")
+        self.texto_resultado.delete("1.0", "end")
+        self.texto_resultado.insert(
+            "end", f"Escaneando {protocolo} en {host} del puerto {puerto_inicio} al {puerto_fin}...\n")
 
-        # Ejecutar el escaneo
-        open_ports = scan_ports(host, start_port, end_port, protocol=protocol)
+        puertos_abiertos = escanear_puertos(
+            host, puerto_inicio, puerto_fin, protocolo=protocolo)
 
-        if not open_ports:
-            self.result_text.insert(
+        if not puertos_abiertos:
+            self.texto_resultado.insert(
                 "end", "No se encontraron puertos abiertos.\n")
         else:
-            # Mostrar los resultados
-            self.result_text.insert(
+            self.texto_resultado.insert(
                 "end", f"{'Puerto':<8} {'Protocolo':<10} {'Estado':<15} {'Servicio':<20}\n")
-            self.result_text.insert("end", "-" * 55 + "\n")
-            for port_info in open_ports:
-                result_line = f"{port_info['port']:<8} {port_info['protocol']:<10} {port_info['status']:<15} {port_info['service']:<20}\n"
-                self.result_text.insert("end", result_line)
+            self.texto_resultado.insert("end", "-" * 55 + "\n")
+            for info_puerto in puertos_abiertos:
+                linea_resultado = f"{info_puerto['puerto']:<8} {info_puerto['protocolo']:<10} {info_puerto['estado']:<15} {info_puerto['servicio']:<20}\n"
+                self.texto_resultado.insert("end", linea_resultado)
+
+        self.boton_escanear.configure(text="Escanear", state="normal")
 
 
 if __name__ == "__main__":
-    app = PortScannerApp()
+    app = AppEscanerPuertos()
     app.mainloop()
