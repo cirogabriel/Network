@@ -97,15 +97,14 @@ El programa devuelve una tabla con los siguientes campos:
 ## Capturas de Pantalla
 
 ### Interfaz GUI
-![GUI Principal](./screenshots/gui-main.png)
+![GUI Principal](./screenshots/image.png)
 *Interfaz gráfica principal - formulario de escaneo*
 
-![GUI Resultados](./screenshots/gui-results.png)
+![GUI Resultados](./screenshots/image2.png)
 *Resultados de escaneo en la GUI*
 
-### Interfaz CLI
-![CLI Ejecución](./screenshots/cli-execution.png)
-*Ejecución de escaneo en terminal*
+![CLI Ejecución](./screenshots/image3.png)
+*Ejecución de escaneeo en la GUI*
 
 ## Configuración Avanzada
 
