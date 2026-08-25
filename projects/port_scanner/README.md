@@ -2,7 +2,7 @@
 
 Una aplicación completa de escaneo de puertos con interfaces CLI y GUI, diseñada para detectar puertos abiertos en hosts remotos mediante protocolos TCP y UDP.
 
-## 🚀 Características
+## Características
 
 - **Escaneo TCP y UDP**: Soporte para ambos protocolos de red
 - **Interfaz Dual**: 
@@ -16,7 +16,7 @@ Una aplicación completa de escaneo de puertos con interfaces CLI y GUI, diseña
 - **Identificación de Servicios**: Detecta servicios conocidos asociados a puertos estándar
 - **Manejo de Errores**: Gestión específica de timeouts y excepciones por protocolo
 
-## 📋 Requisitos
+## Requisitos
 
 ```bash
 Python 3.8+
@@ -36,7 +36,7 @@ cd Network/projects/port_scanner
 pip install customtkinter
 ```
 
-## 🎯 Uso
+## Uso
 
 ### Interfaz CLI
 
@@ -77,37 +77,8 @@ Completa los campos:
 
 Haz clic en el botón **"Escanear"** para iniciar.
 
-## 📁 Estructura del Proyecto
 
-```
-port_scanner/
-├── app.py              # Interfaz GUI con CustomTkinter
-├── main.py             # Interfaz CLI
-├── scanner.py          # Lógica de escaneo (TCP/UDP)
-├── utils.py            # Funciones de validación y utilidades
-└── README.md           # Este archivo
-```
-
-### Módulos
-
-#### `scanner.py`
-- `escanear_puerto_tcp(host, puerto)`: Escanea un puerto TCP individual
-- `escanear_puerto_udp(host, puerto)`: Escanea un puerto UDP individual
-- `escanear_puertos(host, puerto_inicio, puerto_fin, protocolo, hilos)`: Coordina el escaneo paralelo
-
-#### `utils.py`
-- `validar_ip(ip)`: Valida formato IPv4 con regex
-- `validar_puertos(puerto_inicio, puerto_fin)`: Valida rangos de puertos
-- `resolver_host(host)`: Resuelve hostname a dirección IP
-- `mostrar_detalles_puertos(puertos)`: Formatea y muestra resultados
-
-#### `app.py`
-- `AppEscanerPuertos`: Clase principal de la GUI heredada de CTk
-
-#### `main.py`
-- `main()`: Punto de entrada para la interfaz CLI
-
-## 🔍 Resultados
+## Resultados
 
 El programa devuelve una tabla con los siguientes campos:
 
@@ -123,7 +94,7 @@ El programa devuelve una tabla con los siguientes campos:
 - `abierto o filtrado` (UDP): No hay respuesta clara
 - `error`: Error durante el escaneo
 
-## 📸 Capturas de Pantalla
+## Capturas de Pantalla
 
 ### Interfaz GUI
 ![GUI Principal](./screenshots/gui-main.png)
@@ -136,7 +107,7 @@ El programa devuelve una tabla con los siguientes campos:
 ![CLI Ejecución](./screenshots/cli-execution.png)
 *Ejecución de escaneo en terminal*
 
-## ⚙️ Configuración Avanzada
+## Configuración Avanzada
 
 ### Número de Hilos
 Puedes modificar el número máximo de hilos concurrentes editando el parámetro `hilos` en la función `escanear_puertos()`:
@@ -150,39 +121,12 @@ Ajusta los timeouts en `scanner.py`:
 - TCP: `s.settimeout(1)` (línea en `escanear_puerto_tcp`)
 - UDP: `s.settimeout(0.9)` (línea en `escanear_puerto_udp`)
 
-## 🛡️ Consideraciones de Seguridad
 
-⚠️ **Uso Legal**: Este herramienta está diseñada únicamente para:
-- Auditoría de tus propios sistemas
-- Aprendizaje y educación
-- Diagnóstico de redes autorizadas
-
-El escaneo no autorizado de sistemas ajenos es ilegal. Siempre obtén permiso antes de escanear cualquier host que no sea de tu propiedad.
-
-## 🐛 Solución de Problemas
-
-**Problema**: "Error: No se pudo resolver el host"
-- **Solución**: Verifica que el hostname sea válido o usa la dirección IP directamente
-
-**Problema**: Escaneo muy lento
-- **Solución**: Aumenta el número de hilos o reduce el rango de puertos
-
-**Problema**: ImportError con customtkinter
-- **Solución**: Instala customtkinter: `pip install customtkinter`
-
-## 🤝 Contribuciones
-
-Las contribuciones son bienvenidas. Por favor:
-1. Fork el repositorio
-2. Crea una rama para tu feature
-3. Haz commit de tus cambios
-4. Envía un Pull Request
-
-## 📄 Licencia
+## Licencia
 
 Este proyecto está bajo licencia MIT. Ver `LICENSE` para más detalles.
 
-## 👤 Autor
+## Autor
 
 **Ciro Gabriel**  
 GitHub: [@cirogabriel](https://github.com/cirogabriel)
