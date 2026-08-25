@@ -23,7 +23,7 @@ Python 3.8+
 customtkinter  # Solo para la interfaz GUI
 ```
 
-## 📦 Instalación
+## Instalación
 
 1. Clona el repositorio:
 ```bash
